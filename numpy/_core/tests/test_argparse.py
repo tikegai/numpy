@@ -63,6 +63,12 @@ def test_too_many_positional():
         func(1, 2, 3, 4)
 
 
+def test_too_few_positional():
+    with pytest.raises(TypeError,
+                       match=r"takes from 2 to 3 positional arguments but 1 was given"):
+        func(1)
+
+
 def test_multiple_values():
     with pytest.raises(TypeError,
             match=r"given by name \('arg2'\) and position \(position 1\)"):
