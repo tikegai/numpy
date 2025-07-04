@@ -431,17 +431,8 @@ _npy_parse_arguments(const char *funcname,
 
     /* Required arguments are typically not passed as keyword arguments */
     if (NPY_UNLIKELY(len_args < cache->nrequired)) {
-        /* (PyArg_* also does this after the actual parsing is finished) */
-        if (NPY_UNLIKELY(max_nargs < cache->nrequired)) {
-            raise_missing_argument(funcname, cache, max_nargs);
-            goto converting_failed;
-        }
-        for (int i = 0; i < cache->nrequired; i++) {
-            if (NPY_UNLIKELY(all_arguments[i] == NULL)) {
-                raise_missing_argument(funcname, cache, i);
-                goto converting_failed;
-            }
-        }
+        return raise_incorrect_number_of_positional_args(
+                funcname, cache, len_args);
     }
 
     va_end(va);

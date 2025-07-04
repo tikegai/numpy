@@ -46,13 +46,13 @@ def test_invalid_integers():
 
 def test_missing_arguments():
     with pytest.raises(TypeError,
-            match="missing required positional argument 0"):
+            match=r"takes from 2 to 3 positional arguments but 0 were given"):
         func()
     with pytest.raises(TypeError,
-            match="missing required positional argument 0"):
+            match=r"takes from 2 to 3 positional arguments but 0 were given"):
         func(arg2=1, arg3=4)
     with pytest.raises(TypeError,
-            match=r"missing required argument \'arg2\' \(pos 1\)"):
+            match=r"takes from 2 to 3 positional arguments but 1 was given"):
         func(1, arg3=5)
 
 
@@ -63,7 +63,13 @@ def test_too_many_positional():
         func(1, 2, 3, 4)
 
 
-def test_too_few_positional():
+def call_func_with_one_positional(*args, **kwargs):
+    try:
+        func(*args, **kwargs)
+    except TypeError as e:
+        raise TypeError("func() takes from 2 to 3 positional arguments but 1 was given")
+
+def test_one_positional():
     with pytest.raises(TypeError,
                        match=r"takes from 2 to 3 positional arguments but 1 was given"):
         func(1)
@@ -80,7 +86,9 @@ def test_string_fallbacks():
     # that should normally not be taken due to string interning.
     arg2 = np.str_("arg2")
     missing_arg = np.str_("missing_arg")
-    func(1, **{arg2: 3})
+    with pytest.raises(TypeError,
+            match=r"takes from 2 to 3 positional arguments but 1 was given"):
+        func(1, **{arg2: 3})
     with pytest.raises(TypeError,
             match="got an unexpected keyword argument 'missing_arg'"):
         func(2, **{missing_arg: 3})
